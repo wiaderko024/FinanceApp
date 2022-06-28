@@ -4,14 +4,14 @@
       "anonymousAuthentication": true,
       "iisExpress": {
         "applicationUrl": "http://localhost:64703",
-        "sslPort": 44333
+        "sslPort": 0
       }
     },
     "profiles": {
       "FinanceApp.Server": {
         "commandName": "Project",
         "dotnetRunMessages": true,
-        "launchBrowser": true,
+        "launchBrowser": false,
         "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
         "applicationUrl": "https://localhost:7206;http://localhost:5030",
         "environmentVariables": {

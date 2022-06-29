@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FinanceApp.Server.Helpers;
+using FinanceApp.Server.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,13 +13,17 @@ namespace FinanceApp.Server.Controllers;
 [ApiController]
 public class StocksController : ControllerBase
 {
-    [HttpGet("SearchStocksInPolygonAPI")]
-    public async Task<IActionResult> SearchStockInPolygonAPI(string? search)
+    private readonly IStockService _service;
+
+    public StocksController(IStockService service)
     {
-        var client = new PolygonApiClient();
-
-        await client.SearchStock(search);
-
-        return Ok();
+        _service = service;
+    }
+    
+    [HttpGet("SearchStocksInPolygonAPI")]
+    public async Task<IActionResult> SearchStocksInPolygonApi(string? search)
+    {
+        var response = await _service.SearchStocksInPolygonApiAsync(search);
+        return response.StatusCode != StatusCodes.Status200OK ? StatusCode(response.StatusCode, response.Message) : Ok(response.Result);
     }
 }

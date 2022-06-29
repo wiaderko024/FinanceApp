@@ -1,6 +1,6 @@
 namespace FinanceApp.Server.DTO;
 
-public class StocksListDTO
+public class SearchStocksListDTO
 {
     public IEnumerable<StockShortDTO> Results { get; set; }
 }

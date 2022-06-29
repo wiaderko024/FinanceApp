@@ -27,4 +27,13 @@ public class StockService : IStockService
 
         return response;
     }
+
+    public async Task<Response<StockDTO>> GetStockAsync(string ticker)
+    {
+        var response = new Response<StockDTO>();
+        
+        // todo
+        
+        return response;
+    }
 }

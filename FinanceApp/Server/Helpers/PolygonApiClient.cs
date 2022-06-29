@@ -1,4 +1,5 @@
 using FinanceApp.Server.DTO;
+using FinanceApp.Server.Models;
 
 namespace FinanceApp.Server.Helpers;
 
@@ -10,7 +11,11 @@ public class PolygonApiClient
 
     public async Task<SearchStocksListDTO?> SearchStock(string? search)
     {
-        var request = $"https://api.polygon.io/v3/reference/tickers?search={search}&active=true&sort=ticker&order=asc&limit=1000&apiKey={ApiKey}";
-        return await _client.GetFromJsonAsync<SearchStocksListDTO>(request);
+        return await _client.GetFromJsonAsync<SearchStocksListDTO>($"https://api.polygon.io/v3/reference/tickers?search={search}&active=true&sort=ticker&order=asc&limit=1000&apiKey={ApiKey}");
+    }
+
+    public async Task<PolygonTickerDetailDTO?> GetStockFromPolygon(string ticker)
+    {
+        return await _client.GetFromJsonAsync<PolygonTickerDetailDTO>($"https://api.polygon.io/v3/reference/tickers/{ticker.ToUpper()}?apiKey={ApiKey}");
     }
 }

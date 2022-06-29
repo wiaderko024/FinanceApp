@@ -20,10 +20,18 @@ public class StocksController : ControllerBase
         _service = service;
     }
     
-    [HttpGet("SearchStocksInPolygonAPI")]
+    [HttpGet]
     public async Task<IActionResult> SearchStocksInPolygonApi(string? search)
     {
         var response = await _service.SearchStocksInPolygonApiAsync(search);
         return response.StatusCode != StatusCodes.Status200OK ? StatusCode(response.StatusCode, response.Message) : Ok(response.Result);
+    }
+
+    [HttpGet("{ticker}")]
+    public async Task<IActionResult> GetStock(string ticker)
+    {
+        var client = new PolygonApiClient();
+        await client.GetStockFromPolygon(ticker);
+        return Ok();
     }
 }

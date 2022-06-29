@@ -30,8 +30,11 @@ public class StocksController : ControllerBase
     [HttpGet("{ticker}")]
     public async Task<IActionResult> GetStock(string ticker)
     {
-        var client = new PolygonApiClient();
-        await client.GetStockFromPolygon(ticker);
-        return Ok();
+        var response = await _service.GetStockAsync(ticker);
+        return response.StatusCode switch
+        {
+            StatusCodes.Status404NotFound => NotFound(response.Message),
+            _ => Ok(response.Result)
+        };
     }
 }

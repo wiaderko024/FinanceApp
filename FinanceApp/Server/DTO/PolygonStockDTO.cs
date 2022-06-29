@@ -1,35 +1,26 @@
+using System.Text.Json.Serialization;
+
 namespace FinanceApp.Server.DTO;
 
 public class PolygonStockDTO
 {
-    public int IdStock { get; set; }
     public string Ticker { get; set; }
     public string Name { get; set; }
-    public string Market { get; set; }
     public string Locale { get; set; }
-    public string Type { get; set; }
     public bool Active { get; set; }
+    [JsonPropertyName("currency_name")]
     public string CurrencyName { get; set; }
-    public string CompositeFigi { get; set; }
-    public string ShareClassFigi { get; set; }
-
+    [JsonPropertyName("primary_exchange")]
     public string PrimaryExchange { get; set; }
-    public string Cik { get; set; }
-    public double MarketCap { get; set; }
+    [JsonPropertyName("phone_number")]
     public string PhoneNumber { get; set; }
-    
     public PolygonAddressDTO Address { get; set; }
-
     public string Description { get; set; }
-    public string SicCode { get; set; }
-    public string SicDescription { get; set; }
-    public string TickerRoot { get; set; }
+    [JsonPropertyName("homepage_url")]
     public string HomePageUrl { get; set; }
+    [JsonPropertyName("total_employees")]
     public int TotalEmployees { get; set; }
+    [JsonPropertyName("list_date")]
     public DateTime ListDate { get; set; }
-    
     public PolygonBrandingDTO Branding { get; set; }
-    
-    public int ShareClassSharesOutstanding { get; set; }
-    public int WeightedSharesOutstanding { get; set; }
 }

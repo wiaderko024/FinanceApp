@@ -16,10 +16,6 @@ public class StockService : IStockService
     {
         _context = context;
     }
-    
-    // sprawdzam czy jest w db
-    // jak jest jeden rekord to zwracam
-    // jak nie ma to dodaje do db i zwracam
 
     public async Task<Response<SearchStocksListDTO>> SearchStocksInPolygonApiAsync(string? search)
     {
@@ -45,32 +41,34 @@ public class StockService : IStockService
             }
         }
 
-        var result = await _client.SearchStock(search);
+        try
+        {
+            var result = await _client.SearchStock(search);
+            
+            foreach (var newStock in result.Results)
+            {
+                await _context.Stocks.AddAsync(new Stock
+                {
+                    Name = newStock.Name,
+                    Ticker = newStock.Ticker,
+                    HasData = false
+                });
+            }
 
-        if (result == null)
+            await _context.SaveChangesAsync();
+        
+            response.StatusCode = StatusCodes.Status200OK;
+            response.Message = "OK";
+            response.Result = result;
+
+            return response;
+        }
+        catch (Exception e)
         {
             response.StatusCode = StatusCodes.Status500InternalServerError;
             response.Message = "Problem with loading tickers short info from polygon api.";
             return response;
         }
-
-        foreach (var newStock in result.Results)
-        {
-            await _context.Stocks.AddAsync(new Stock
-            {
-                Name = newStock.Name,
-                Ticker = newStock.Ticker,
-                HasData = false
-            });
-        }
-
-        await _context.SaveChangesAsync();
-        
-        response.StatusCode = StatusCodes.Status200OK;
-        response.Message = "OK";
-        response.Result = result;
-
-        return response;
     }
 
     public async Task<Response<StockDTO>> GetStockAsync(string ticker)
@@ -146,7 +144,7 @@ public class StockService : IStockService
         catch (Exception)
         {
             response.StatusCode = StatusCodes.Status404NotFound;
-            response.Message = "Stock not found";
+            response.Message = "Stock not found or polygon api doesn't response";
             return response;
         }
     }

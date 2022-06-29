@@ -23,10 +23,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await _client.GetFromJsonAsync<SearchStocksListDTO>("api/stocks");
+        try
+        {
+            var response = await _client.GetFromJsonAsync<SearchStocksListDTO>("api/stocks");
 
-        LocalData = response.Results.ToList();
-        
+            LocalData = response.Results.ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+
         await base.OnInitializedAsync();
     }
 
@@ -34,8 +41,15 @@
     {
         Ticker = args.Text;
 
-        var response = await _client.GetFromJsonAsync<SearchStocksListDTO>($"api/stocks?search={Ticker}");
+        try
+        {
+            var response = await _client.GetFromJsonAsync<SearchStocksListDTO>($"api/stocks?search={Ticker}");
 
-        LocalData = response.Results.ToList();
+            LocalData = response.Results.ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 }

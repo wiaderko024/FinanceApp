@@ -4,6 +4,7 @@ using FinanceApp.Server.Helpers;
 using FinanceApp.Server.Models;
 using FinanceApp.Server.Responses;
 using FinanceApp.Shared.DTO;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceApp.Server.Services;
@@ -24,13 +25,13 @@ public class StockService : IStockService
 
         if (search != null)
         {
-            var stocks = _context.Stocks.Where(e => e.Ticker.Contains(search) || e.Name.Contains(search))
+            var stocks = _context.Stocks.Where(e => e.Ticker.ToLower().Contains(search.ToLower()) || e.Name.ToLower().Contains(search.ToLower()))
                 .Select(e => new StockShortDTO
                 {
                     Name = e.Name,
                     Ticker = e.Ticker
                 });
-            
+        
             if (stocks.Any())
             {
                 response.StatusCode = StatusCodes.Status200OK;
@@ -40,36 +41,10 @@ public class StockService : IStockService
                 };
                 return response;
             }
+            return await AddStockInfo(search, response);
         }
 
-        try
-        {
-            var result = await _client.SearchStock(search);
-            
-            foreach (var newStock in result.Results)
-            {
-                await _context.Stocks.AddAsync(new Stock
-                {
-                    Name = newStock.Name,
-                    Ticker = newStock.Ticker,
-                    HasData = false
-                });
-            }
-
-            await _context.SaveChangesAsync();
-        
-            response.StatusCode = StatusCodes.Status200OK;
-            response.Message = "OK";
-            response.Result = result;
-
-            return response;
-        }
-        catch (Exception e)
-        {
-            response.StatusCode = StatusCodes.Status500InternalServerError;
-            response.Message = "Problem with loading tickers short info from polygon api.";
-            return response;
-        }
+        return await AddStockInfo(search, response);
     }
 
     public async Task<Response<StockDTO>> GetStockAsync(string ticker)
@@ -175,5 +150,47 @@ public class StockService : IStockService
                 IconUrl = stock.IconUrl
             }
         };
+    }
+
+    private async Task<Response<SearchStocksListDTO>> AddStockInfo(string? search, Response<SearchStocksListDTO> response)
+    {
+        try
+        {
+            var result = await _client.SearchStock(search);
+
+            foreach (var newStock in result.Results)
+            {
+                var stock = await _context.Stocks.SingleOrDefaultAsync(e => string.Equals(e.Ticker, search, StringComparison.CurrentCultureIgnoreCase));
+                if (stock == null)
+                {
+                    await _context.Stocks.AddAsync(new Stock
+                    {
+                        Name = newStock.Name,
+                        Ticker = newStock.Ticker,
+                        HasData = false
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            response.StatusCode = StatusCodes.Status200OK;
+            response.Message = "OK";
+            response.Result = result;
+
+            return response;
+        }
+        catch (SqlException)
+        {
+            response.StatusCode = StatusCodes.Status400BadRequest;
+            response.Message = "Cannot add another stock with this same ticker";
+            return response;
+        }
+        catch (Exception)
+        {
+            response.StatusCode = StatusCodes.Status500InternalServerError;
+            response.Message = "Problem with loading tickers short info from polygon api.";
+            return response;
+        }
     }
 }

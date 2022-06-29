@@ -20,4 +20,5 @@ public class Stock
     public DateTime? ListDate { get; set; }
     public string? LogoUrl { get; set; }
     public string? IconUrl { get; set; }
+    public bool HasData { get; set; }
 }

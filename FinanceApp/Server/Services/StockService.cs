@@ -16,10 +16,34 @@ public class StockService : IStockService
     {
         _context = context;
     }
+    
+    // sprawdzam czy jest w db
+    // jak jest jeden rekord to zwracam
+    // jak nie ma to dodaje do db i zwracam
 
     public async Task<Response<SearchStocksListDTO>> SearchStocksInPolygonApiAsync(string? search)
     {
         var response = new Response<SearchStocksListDTO>();
+
+        if (search != null)
+        {
+            var stocks = _context.Stocks.Where(e => e.Ticker.Contains(search) || e.Name.Contains(search))
+                .Select(e => new StockShortDTO
+                {
+                    Name = e.Name,
+                    Ticker = e.Ticker
+                });
+            
+            if (stocks.Any())
+            {
+                response.StatusCode = StatusCodes.Status200OK;
+                response.Result = new SearchStocksListDTO
+                {
+                    Results = stocks
+                };
+                return response;
+            }
+        }
 
         var result = await _client.SearchStock(search);
 
@@ -30,15 +54,24 @@ public class StockService : IStockService
             return response;
         }
 
+        foreach (var newStock in result.Results)
+        {
+            await _context.Stocks.AddAsync(new Stock
+            {
+                Name = newStock.Name,
+                Ticker = newStock.Ticker,
+                HasData = false
+            });
+        }
+
+        await _context.SaveChangesAsync();
+        
         response.StatusCode = StatusCodes.Status200OK;
         response.Message = "OK";
         response.Result = result;
 
         return response;
     }
-    
-    // sprawdzamy czy jest w db jesli tak to zwracamy
-    // jesli nie to robimy request, dodajemy do db i zwracamy
 
     public async Task<Response<StockDTO>> GetStockAsync(string ticker)
     {
@@ -46,7 +79,7 @@ public class StockService : IStockService
 
         var stock = await _context.Stocks.SingleOrDefaultAsync(e => e.Ticker == ticker);
 
-        if (stock != null)
+        if (stock is {HasData: true})
         {
             response.StatusCode = StatusCodes.Status200OK;
             response.Result = CreateStockDto(stock);
@@ -57,28 +90,52 @@ public class StockService : IStockService
         {
             var newStock = await _client.GetStockFromPolygon(ticker);
             
-            stock = new Stock
+            stock = await _context.Stocks.SingleOrDefaultAsync(e => e.Ticker == ticker);
+            if (stock != null)
             {
-                Ticker = newStock.Results.Ticker,
-                Name = newStock.Results.Name,
-                Locale = newStock.Results.Locale,
-                Active = newStock.Results.Active,
-                CurrencyName = newStock.Results.CurrencyName,
-                PrimaryExchange = newStock.Results.PrimaryExchange,
-                PhoneNumber = newStock.Results.PhoneNumber,
-                Address1 = newStock.Results.Address.Address1,
-                City = newStock.Results.Address.City,
-                State = newStock.Results.Address.State,
-                PostalCode = newStock.Results.Address.PostalCode,
-                Description = newStock.Results.Description,
-                HomePageUrl = newStock.Results.HomePageUrl,
-                TotalEmployees = newStock.Results.TotalEmployees,
-                ListDate = newStock.Results.ListDate,
-                LogoUrl = newStock.Results.Branding.LogoUrl,
-                IconUrl = newStock.Results.Branding.IconUrl
-            };
-
-            await _context.AddAsync(stock);
+                stock.Locale = newStock.Results.Locale;
+                stock.Active = newStock.Results.Active;
+                stock.CurrencyName = newStock.Results.CurrencyName;
+                stock.PrimaryExchange = newStock.Results.PrimaryExchange;
+                stock.PhoneNumber = newStock.Results.PhoneNumber;
+                stock.Address1 = newStock.Results.Address.Address1;
+                stock.City = newStock.Results.Address.City;
+                stock.State = newStock.Results.Address.State;
+                stock.PostalCode = newStock.Results.Address.PostalCode;
+                stock.Description = newStock.Results.Description;
+                stock.HomePageUrl = newStock.Results.HomePageUrl;
+                stock.TotalEmployees = newStock.Results.TotalEmployees;
+                stock.ListDate = newStock.Results.ListDate;
+                stock.LogoUrl = newStock.Results.Branding.LogoUrl;
+                stock.IconUrl = newStock.Results.Branding.IconUrl;
+                stock.HasData = true;
+            }
+            else
+            {
+                stock = new Stock
+                {
+                    Ticker = newStock.Results.Ticker,
+                    Name = newStock.Results.Name,
+                    Locale = newStock.Results.Locale,
+                    Active = newStock.Results.Active,
+                    CurrencyName = newStock.Results.CurrencyName,
+                    PrimaryExchange = newStock.Results.PrimaryExchange,
+                    PhoneNumber = newStock.Results.PhoneNumber,
+                    Address1 = newStock.Results.Address.Address1,
+                    City = newStock.Results.Address.City,
+                    State = newStock.Results.Address.State,
+                    PostalCode = newStock.Results.Address.PostalCode,
+                    Description = newStock.Results.Description,
+                    HomePageUrl = newStock.Results.HomePageUrl,
+                    TotalEmployees = newStock.Results.TotalEmployees,
+                    ListDate = newStock.Results.ListDate,
+                    LogoUrl = newStock.Results.Branding.LogoUrl,
+                    IconUrl = newStock.Results.Branding.IconUrl,
+                    HasData = true
+                };
+                await _context.AddAsync(stock);
+            }
+            
             await _context.SaveChangesAsync();
 
             response.StatusCode = StatusCodes.Status200OK;

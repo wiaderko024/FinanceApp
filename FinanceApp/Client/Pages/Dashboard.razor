@@ -1,0 +1,21 @@
+@page "/Dashboard"
+@inject HttpClient _client
+
+<h3>Dashboard</h3>
+
+<TickerSearchBar></TickerSearchBar>
+
+@code {
+
+    public List<StockShortDTO> Stocks { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await _client.GetFromJsonAsync<SearchStocksListDTO>("api/stocks?search=tsl");
+        
+        Stocks = response.Results.ToList();
+        
+        await base.OnInitializedAsync();
+    }
+
+}

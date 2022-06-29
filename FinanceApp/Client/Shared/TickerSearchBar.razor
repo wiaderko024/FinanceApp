@@ -1,0 +1,41 @@
+@inject HttpClient _client
+
+<h3>TickerSearchBar</h3>
+
+<SfAutoComplete TValue="string" TItem="StockShortDTO" Placeholder="Search stock" DataSource="@LocalData">
+    <AutoCompleteFieldSettings Value="Ticker" />
+    <AutoCompleteEvents TValue="string" TItem="StockShortDTO" Filtering="OnFilter" />
+    <AutoCompleteTemplates TItem="StockShortDTO">
+        <ItemTemplate>
+            <div>
+                <span style="float: left">@context.Ticker</span>
+                <span style="float: right">@context.Name</span>
+            </div>
+        </ItemTemplate>
+    </AutoCompleteTemplates>
+</SfAutoComplete>
+
+@code {
+    // public EventCallback<string> OnSearch { get; set; }
+
+    public string Ticker;
+    List<StockShortDTO> LocalData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await _client.GetFromJsonAsync<SearchStocksListDTO>("api/stocks");
+
+        LocalData = response.Results.ToList();
+        
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OnFilter(FilteringEventArgs args)
+    {
+        Ticker = args.Text;
+
+        var response = await _client.GetFromJsonAsync<SearchStocksListDTO>($"api/stocks?search={Ticker}");
+
+        LocalData = response.Results.ToList();
+    }
+}

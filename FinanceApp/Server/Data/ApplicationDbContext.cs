@@ -22,5 +22,7 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(StockEfConfiguration).GetTypeInfo().Assembly);
+
+        modelBuilder.Entity<Stock>().HasIndex(e => e.Ticker).IsUnique();
     }
 }

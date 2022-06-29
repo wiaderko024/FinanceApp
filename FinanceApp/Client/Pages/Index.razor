@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inject NavigationManager _navigation
 
 <PageTitle>Index</PageTitle>
 
@@ -6,4 +7,22 @@
 
 Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+core data dropdown themes
+
+<AuthorizeView>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
+    <Authorized>
+        <NavLink></NavLink>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+}

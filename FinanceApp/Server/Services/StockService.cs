@@ -3,6 +3,7 @@ using FinanceApp.Server.DTO;
 using FinanceApp.Server.Helpers;
 using FinanceApp.Server.Models;
 using FinanceApp.Server.Responses;
+using FinanceApp.Shared.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceApp.Server.Services;

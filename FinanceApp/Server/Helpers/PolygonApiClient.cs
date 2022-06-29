@@ -1,5 +1,6 @@
 using FinanceApp.Server.DTO;
 using FinanceApp.Server.Models;
+using FinanceApp.Shared.DTO;
 
 namespace FinanceApp.Server.Helpers;
 

@@ -18,48 +18,6 @@ public class StockService : IStockService
         _context = context;
     }
     
-    private async Task<Response<SearchStocksListDTO>> AddStockInfo(string? search, Response<SearchStocksListDTO> response)
-    {
-        try
-        {
-            var result = await _client.SearchStock(search);
-
-            foreach (var newStock in result.Results)
-            {
-                var stock = await _context.Stocks.SingleOrDefaultAsync(e => e.Ticker.ToLower() == newStock.Ticker.ToLower());
-                if (stock == null)
-                {
-                    await _context.Stocks.AddAsync(new Stock
-                    {
-                        Name = newStock.Name,
-                        Ticker = newStock.Ticker,
-                        HasData = false
-                    });
-                }
-            }
-
-            await _context.SaveChangesAsync();
-
-            response.StatusCode = StatusCodes.Status200OK;
-            response.Message = "OK";
-            response.Result = result;
-
-            return response;
-        }
-        catch (SqlException)
-        {
-            response.StatusCode = StatusCodes.Status400BadRequest;
-            response.Message = "Cannot add another stock with this same ticker";
-            return response;
-        }
-        catch (Exception)
-        {
-            response.StatusCode = StatusCodes.Status500InternalServerError;
-            response.Message = "Problem with loading tickers short info from polygon api.";
-            return response;
-        }
-    }
-
     public async Task<Response<SearchStocksListDTO>> SearchStocksInPolygonApiAsync(string? search)
     {
         var response = new Response<SearchStocksListDTO>();
@@ -157,10 +115,25 @@ public class StockService : IStockService
         }
         catch (Exception e)
         {
-            Console.WriteLine("EXC =>" + e);
-            
             response.StatusCode = StatusCodes.Status404NotFound;
             response.Message = "Stock not found or polygon api doesn't response";
+            return response;
+        }
+    }
+
+    public async Task<Response<PolygonArticleDTO>> GetArticlesAsync(string ticker)
+    {
+        var response = new Response<PolygonArticleDTO>();
+        try
+        {
+            response.StatusCode = StatusCodes.Status200OK;
+            response.Result = await _client.GetArticlesFromTicker(ticker);
+            return response;
+        }
+        catch (Exception e)
+        {
+            response.StatusCode = StatusCodes.Status500InternalServerError;
+            response.Message = "Polygon api doesn't response";
             return response;
         }
     }
@@ -192,4 +165,45 @@ public class StockService : IStockService
         };
     }
     
+    private async Task<Response<SearchStocksListDTO>> AddStockInfo(string? search, Response<SearchStocksListDTO> response)
+    {
+        try
+        {
+            var result = await _client.SearchStock(search);
+
+            foreach (var newStock in result.Results)
+            {
+                var stock = await _context.Stocks.SingleOrDefaultAsync(e => e.Ticker.ToLower() == newStock.Ticker.ToLower());
+                if (stock == null)
+                {
+                    await _context.Stocks.AddAsync(new Stock
+                    {
+                        Name = newStock.Name,
+                        Ticker = newStock.Ticker,
+                        HasData = false
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            response.StatusCode = StatusCodes.Status200OK;
+            response.Message = "OK";
+            response.Result = result;
+
+            return response;
+        }
+        catch (SqlException)
+        {
+            response.StatusCode = StatusCodes.Status400BadRequest;
+            response.Message = "Cannot add another stock with this same ticker";
+            return response;
+        }
+        catch (Exception)
+        {
+            response.StatusCode = StatusCodes.Status500InternalServerError;
+            response.Message = "Problem with loading tickers short info from polygon api.";
+            return response;
+        }
+    }
 }

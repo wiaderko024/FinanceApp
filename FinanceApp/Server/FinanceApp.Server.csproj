@@ -32,8 +32,4 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.4" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTO" />
-  </ItemGroup>
-
 </Project>

@@ -37,4 +37,15 @@ public class StocksController : ControllerBase
             _ => Ok(response.Result)
         };
     }
+
+    [HttpGet("{ticker}/GetArticles")]
+    public async Task<IActionResult> GetArticles(string ticker)
+    {
+        var response = await _service.GetArticlesAsync(ticker);
+        return response.StatusCode switch
+        {
+            StatusCodes.Status500InternalServerError => StatusCode(response.StatusCode, response.Message),
+            _ => Ok(response.Result)
+        };
+    }
 }

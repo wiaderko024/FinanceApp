@@ -19,4 +19,9 @@ public class PolygonApiClient
     {
         return await _client.GetFromJsonAsync<PolygonTickerDetailDTO>($"https://api.polygon.io/v3/reference/tickers/{ticker.ToUpper()}?apiKey={ApiKey}");
     }
+
+    public async Task<PolygonArticleDTO?> GetArticlesFromTicker(string ticker)
+    {
+        return await _client.GetFromJsonAsync<PolygonArticleDTO>($"https://api.polygon.io/v2/reference/news?ticker={ticker.ToUpper()}&apiKey={ApiKey}");
+    }
 }

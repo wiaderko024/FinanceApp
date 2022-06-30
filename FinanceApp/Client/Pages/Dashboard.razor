@@ -11,6 +11,8 @@
     <StockDetail Stock="Stock" />
 }
 
+<StockChart @ref="Chart" Finances="Finances"/>
+
 @if (Articles != null)
 {
     <StockArticles Articles="Articles" />
@@ -20,6 +22,8 @@
     
     public StockDTO? Stock { get; set; }
     public PolygonArticleDTO? Articles { get; set; }
+    public List<StockFinanceDTO>? Finances { get; set; }
+    [Parameter] public StockChart Chart { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,6 +34,10 @@
     {
         await GetStockDetail(ticker);
         await GetArticles(ticker);
+        await GetFinances(ticker);
+
+        Chart.Chart.Refresh();
+
         StateHasChanged();
     }
 
@@ -69,6 +77,39 @@
         else
         {
             Articles = null;
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async Task GetFinances(string? ticker)
+    {
+        if (ticker != null)
+        {
+            try
+            {
+                var dto = await _client.GetFromJsonAsync<PolygonFinanceDTO>($"api/stocks/{ticker}/getfinances");
+
+                var tmp = dto.Finances.Select(finance => new StockFinanceDTO
+                {
+                    C = finance.ClosePrice, H = finance.HighestPrice, L = finance.LowestPrice, O = finance.OpenPrice, V = finance.Volume, T = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(finance.Timestamp).ToLocalTime()
+                }).ToList();
+
+                Finances = tmp;
+                //
+                // foreach (var halo in tmp)
+                // {
+                //     Console.WriteLine(halo.T);
+                // }
+                
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Polygon api doesn't response");
+            }
+        }
+        else
+        {
+            Stock = null;
         }
         await InvokeAsync(StateHasChanged);
     }

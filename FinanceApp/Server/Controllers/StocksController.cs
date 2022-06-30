@@ -69,7 +69,18 @@ public class StocksController : ControllerBase
         var response = await _subscriptionService.SubscribeAsync(ticker, dto);
         return response.StatusCode switch
         {
-            StatusCodes.Status404NotFound => NotFound(),
+            StatusCodes.Status404NotFound => NotFound(response.Message),
+            _ => Ok()
+        };
+    }
+
+    [HttpPost("{ticker}/unsubscribe")]
+    public async Task<IActionResult> Unsubscribe(string ticker, SubscribeDTO dto)
+    {
+        var response = await _subscriptionService.UnsubscribeAsync(ticker, dto);
+        return response.StatusCode switch
+        {
+            StatusCodes.Status404NotFound => NotFound(response.Message),
             _ => Ok()
         };
     }

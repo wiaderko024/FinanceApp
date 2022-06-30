@@ -47,4 +47,45 @@ public class SubscriptionService : ISubscriptionService
         
         return response;
     }
+
+    public async Task<Response<object>> UnsubscribeAsync(string ticker, SubscribeDTO dto)
+    {
+        var response = new Response<object>();
+
+        var user = await _context.Users.SingleOrDefaultAsync(e => e.Id == dto.IdUser);
+        if (user == null)
+        {
+            response.StatusCode = StatusCodes.Status404NotFound;
+            response.Message = "User not found";
+            return response;
+        }
+
+        var stock = await _context.Stocks.SingleOrDefaultAsync(e => e.Ticker == ticker);
+        if (stock == null)
+        {
+            response.StatusCode = StatusCodes.Status404NotFound;
+            response.Message = "Stock not found";
+            return response;
+        }
+
+        var subscription =
+            await _context.Subscriptions.SingleOrDefaultAsync(e =>
+                e.IdUser == dto.IdUser && e.IdStock == stock.IdStock);
+
+        if (subscription == null)
+        {
+            response.StatusCode = StatusCodes.Status404NotFound;
+            response.Message = "Subscription not found";
+            return response;
+        }
+
+        _context.Subscriptions.Remove(subscription);
+
+        await _context.SaveChangesAsync();
+
+        response.StatusCode = StatusCodes.Status200OK;
+
+
+        return response;
+    }
 }

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace FinanceApp.Server.DTO;
+namespace FinanceApp.Shared.DTO;
 
 public class PolygonStockDTO
 {

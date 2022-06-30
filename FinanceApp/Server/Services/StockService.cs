@@ -1,5 +1,4 @@
 using FinanceApp.Server.Data;
-using FinanceApp.Server.DTO;
 using FinanceApp.Server.Helpers;
 using FinanceApp.Server.Models;
 using FinanceApp.Server.Responses;

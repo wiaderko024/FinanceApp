@@ -1,4 +1,4 @@
-using FinanceApp.Server.DTO;
+using FinanceApp.Shared.DTO;
 using FinanceApp.Server.Models;
 using FinanceApp.Shared.DTO;
 

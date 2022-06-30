@@ -1,4 +1,4 @@
-namespace FinanceApp.Server.DTO;
+namespace FinanceApp.Shared.DTO;
 
 public class PolygonTickerDetailDTO
 {

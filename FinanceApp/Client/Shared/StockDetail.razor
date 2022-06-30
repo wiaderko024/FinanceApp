@@ -2,11 +2,76 @@
 
 <h3>StockDetail</h3>
 
-<h5>@Stock.Name</h5>
+<img src="@Stock.Branding.LogoUrl" alt="..." />
+<h5>Name: @Stock.Name</h5>
+<h5>Ticker: @Stock.Ticker</h5>
+
+@if (Stock.CurrencyName != null)
+{
+    <h5>Currency name: @Stock.CurrencyName</h5>
+}
+else
+{
+    <h5>Currency name: no data</h5>
+}
+
+@if (Stock.PhoneNumber != null)
+{
+    <h5>Phone number: @Stock.PhoneNumber</h5>
+}
+else
+{
+    <h5>Phone number: no data</h5>
+}
+
+@if (Stock.Address != null)
+{
+    <h5>Address1: @Stock.Address.Address1</h5>
+    <h5>City: @Stock.Address.City</h5>
+    <h5>State: @Stock.Address.State</h5>
+    <h5>Postal code: @Stock.Address.PostalCode</h5>
+}
+else
+{
+    <h5>Address: no data</h5>
+}
+
+@if (Stock.Description != null)
+{
+    <h5>Description: @Stock.Description</h5>
+}
+else
+{
+    <h5>Description: no data</h5>
+}
+
+@if (Stock.ListDate != null)
+{
+    <h5>List date: @Stock.ListDate</h5>
+}
+else
+{
+    <h5>List date: no data</h5>
+}
+
+@if (Stock.TotalEmployees != null)
+{
+    <h5>Total employees: @Stock.TotalEmployees</h5>
+}
+else
+{
+    <h5>Total employees: no data</h5>
+}
+
+@if (Stock.HomepageUrl != null)
+{
+    <h5>Home page: <a href="@Stock.HomepageUrl">@Stock.HomepageUrl</a></h5>
+}
+
 
 @code {
     
     [Parameter]
-    public StockShortDTO Stock { get; set; }
+    public StockDTO Stock { get; set; }
     
 }

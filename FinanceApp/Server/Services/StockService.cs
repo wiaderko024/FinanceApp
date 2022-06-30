@@ -111,15 +111,15 @@ public class StockService : IStockService
                 stock.PrimaryExchange = newStock.Results.PrimaryExchange;
                 stock.PhoneNumber = newStock.Results.PhoneNumber;
                 stock.Address1 = newStock.Results.Address == null ? null : newStock.Results.Address.Address1;
-                stock.City = newStock.Results.Address == null ? null :newStock.Results.Address.City;
-                stock.State = newStock.Results.Address == null ? null :newStock.Results.Address.State;
-                stock.PostalCode = newStock.Results.Address == null ? null :newStock.Results.Address.PostalCode;
+                stock.City = newStock.Results.Address == null ? null : newStock.Results.Address.City;
+                stock.State = newStock.Results.Address == null ? null : newStock.Results.Address.State;
+                stock.PostalCode = newStock.Results.Address == null ? null : newStock.Results.Address.PostalCode;
                 stock.Description = newStock.Results.Description;
                 stock.HomePageUrl = newStock.Results.HomePageUrl;
                 stock.TotalEmployees = newStock.Results.TotalEmployees;
                 stock.ListDate = newStock.Results.ListDate;
-                stock.LogoUrl = newStock.Results.Branding == null ? null :newStock.Results.Branding.LogoUrl;
-                stock.IconUrl = newStock.Results.Branding == null ? null :newStock.Results.Branding.IconUrl;
+                stock.LogoUrl = newStock.Results.Branding == null ? null : $"{newStock.Results.Branding.LogoUrl}?apiKey=DrBhGV2FAnbtbcWBQ4gaUkSaEw70PCBn";
+                stock.IconUrl = newStock.Results.Branding == null ? null : $"{newStock.Results.Branding.IconUrl}?apiKey=DrBhGV2FAnbtbcWBQ4gaUkSaEw70PCBn";
                 stock.HasData = true;
             }
             else
@@ -141,8 +141,8 @@ public class StockService : IStockService
                     HomePageUrl = newStock.Results.HomePageUrl,
                     TotalEmployees = newStock.Results.TotalEmployees,
                     ListDate = newStock.Results.ListDate,
-                    LogoUrl = newStock.Results.Branding.LogoUrl,
-                    IconUrl = newStock.Results.Branding.IconUrl,
+                    LogoUrl = $"{newStock.Results.Branding.LogoUrl}?apiKey=DrBhGV2FAnbtbcWBQ4gaUkSaEw70PCBn",
+                    IconUrl = $"{newStock.Results.Branding.IconUrl}?apiKey=DrBhGV2FAnbtbcWBQ4gaUkSaEw70PCBn",
                     HasData = true
                 };
                 await _context.AddAsync(stock);

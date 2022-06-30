@@ -13,7 +13,7 @@
 
 @code {
     
-    public StockShortDTO? Stock { get; set; }
+    public StockDTO? Stock { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -31,7 +31,14 @@
     {
         if (ticker != null)
         {
-            Stock = await _client.GetFromJsonAsync<StockShortDTO>($"api/stocks/{ticker}");
+            try
+            {
+                Stock = await _client.GetFromJsonAsync<StockDTO>($"api/stocks/{ticker}");
+            }
+            catch (Exception)
+            {
+                
+            }
         }
         else
         {

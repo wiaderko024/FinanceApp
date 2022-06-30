@@ -1,4 +1,6 @@
 @page "/Watchlist"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @inject HttpClient _client
 
 <h3>Watchlist</h3>

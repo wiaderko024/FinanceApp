@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using FinanceApp.Server.Helpers;
 using FinanceApp.Server.Services;
 using FinanceApp.Shared.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceApp.Server.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class StocksController : ControllerBase
 {

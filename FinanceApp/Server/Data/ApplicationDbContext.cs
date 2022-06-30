@@ -11,6 +11,7 @@ namespace FinanceApp.Server.Data;
 public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
 {
     public virtual DbSet<Stock> Stocks { get; set; }
+    public virtual DbSet<Subscription> Subscriptions { get; set; }
 
     public ApplicationDbContext(
         DbContextOptions options,

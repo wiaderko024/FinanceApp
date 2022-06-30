@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinanceApp.Server.Helpers;
 using FinanceApp.Server.Services;
+using FinanceApp.Shared.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +15,12 @@ namespace FinanceApp.Server.Controllers;
 public class StocksController : ControllerBase
 {
     private readonly IStockService _service;
+    private readonly ISubscriptionService _subscriptionService;
 
-    public StocksController(IStockService service)
+    public StocksController(IStockService service, ISubscriptionService subscriptionService)
     {
         _service = service;
+        _subscriptionService = subscriptionService;
     }
     
     [HttpGet]
@@ -57,6 +60,17 @@ public class StocksController : ControllerBase
         {
             StatusCodes.Status500InternalServerError => StatusCode(response.StatusCode, response.Message),
             _ => Ok(response.Result)
+        };
+    }
+
+    [HttpPost("{ticker}/subscribe")]
+    public async Task<IActionResult> Subscribe(string ticker, SubscribeDTO dto)
+    {
+        var response = await _subscriptionService.SubscribeAsync(ticker, dto);
+        return response.StatusCode switch
+        {
+            StatusCodes.Status404NotFound => NotFound(),
+            _ => Ok()
         };
     }
 }

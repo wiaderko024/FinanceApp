@@ -65,12 +65,15 @@ public class StocksController : ControllerBase
     }
 
     [HttpPost("{ticker}/subscribe")]
-    public async Task<IActionResult> Subscribe(string ticker, SubscribeDTO dto)
+    public async Task<IActionResult> Subscribe(string ticker)
     {
-        // var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        // Console.WriteLine("DEBUG: " + userId);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var response = await _subscriptionService.SubscribeAsync(ticker, new SubscribeDTO
+        {
+            IdUser = userId
+        });
         
-        var response = await _subscriptionService.SubscribeAsync(ticker, dto);
         return response.StatusCode switch
         {
             StatusCodes.Status404NotFound => NotFound(response.Message),

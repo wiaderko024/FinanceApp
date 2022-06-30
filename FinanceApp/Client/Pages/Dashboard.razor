@@ -8,6 +8,11 @@
 
 @if (Stock != null)
 {
+    <button @onclick="Subscribe" class="btn btn-danger">Subscribe</button>
+}
+
+@if (Stock != null)
+{
     <StockDetail Stock="Stock" />
 }
 
@@ -32,7 +37,7 @@
     public PolygonArticleDTO? Articles { get; set; }
     public List<StockFinanceDTO>? Finances { get; set; }
     public StockFinanceDTO? LastFinance { get; set; }
-    [Parameter] public StockChart Chart { get; set; }
+    [Parameter] public StockChart? Chart { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,7 +50,7 @@
         await GetArticles(ticker);
         await GetFinances(ticker);
 
-        Chart.Chart.Refresh();
+        Chart?.Chart.Refresh();
 
         StateHasChanged();
     }
@@ -116,6 +121,18 @@
             Stock = null;
         }
         await InvokeAsync(StateHasChanged);
+    }
+
+    public async Task Subscribe()
+    {
+        try
+        {
+            await _client.PostAsync($"api/stocks/{Stock.Ticker}/subscribe", null);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Problem with subscription");
+        }
     }
 
 }

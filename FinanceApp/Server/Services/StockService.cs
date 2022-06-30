@@ -46,7 +46,7 @@ public class StockService : IStockService
     {
         var response = new Response<StockDTO>();
 
-        var stock = await _context.Stocks.SingleOrDefaultAsync(e => e.Ticker == ticker);
+        var stock = await _context.Stocks.SingleOrDefaultAsync(e => e.Ticker.ToLower() == ticker.ToLower());
 
         if (stock is {HasData: true})
         {
@@ -61,7 +61,7 @@ public class StockService : IStockService
             
             stock = await _context.Stocks.SingleOrDefaultAsync(e => e.Ticker.ToLower() == newStock.Results.Ticker.ToLower());
 
-            if (stock != null)
+            if (stock != null && stock.HasData == false)
             {
                 stock.Locale = newStock.Results.Locale;
                 stock.Active = newStock.Results.Active;
@@ -108,15 +108,25 @@ public class StockService : IStockService
             
             await _context.SaveChangesAsync();
 
-            response.StatusCode = StatusCodes.Status200OK;
-            response.Result = CreateStockDto(stock);
-        
+            var stockDto = CreateStockDto(stock);
+
+            if (stockDto != null)
+            {
+                response.StatusCode = StatusCodes.Status200OK;
+                response.Result = stockDto;
+            }
+            else
+            {
+                response.StatusCode = StatusCodes.Status404NotFound;
+                response.Message = "Stock not found";
+            }
+            
             return response;
         }
         catch (Exception e)
         {
-            response.StatusCode = StatusCodes.Status404NotFound;
-            response.Message = "Stock not found or polygon api doesn't response";
+            response.StatusCode = StatusCodes.Status500InternalServerError;
+            response.Message = "Polygon api doesn't response";
             return response;
         }
     }

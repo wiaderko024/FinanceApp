@@ -21,4 +21,10 @@ public class Stock
     public string? LogoUrl { get; set; }
     public string? IconUrl { get; set; }
     public bool HasData { get; set; }
+    public virtual ICollection<Subscription> Subscriptions { get; set; }
+
+    public Stock()
+    {
+        Subscriptions = new HashSet<Subscription>();
+    }
 }

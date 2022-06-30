@@ -102,7 +102,8 @@ public class StockService : IStockService
         {
             var newStock = await _client.GetStockFromPolygon(ticker);
             
-            stock = await _context.Stocks.SingleOrDefaultAsync(e => e.Ticker == ticker);
+            stock = await _context.Stocks.SingleOrDefaultAsync(e => e.Ticker.ToLower() == newStock.Results.Ticker.ToLower());
+
             if (stock != null)
             {
                 stock.Locale = newStock.Results.Locale;
@@ -110,16 +111,16 @@ public class StockService : IStockService
                 stock.CurrencyName = newStock.Results.CurrencyName;
                 stock.PrimaryExchange = newStock.Results.PrimaryExchange;
                 stock.PhoneNumber = newStock.Results.PhoneNumber;
-                stock.Address1 = newStock.Results.Address.Address1;
-                stock.City = newStock.Results.Address.City;
-                stock.State = newStock.Results.Address.State;
-                stock.PostalCode = newStock.Results.Address.PostalCode;
+                stock.Address1 = newStock.Results.Address == null ? null : newStock.Results.Address.Address1;
+                stock.City = newStock.Results.Address == null ? null :newStock.Results.Address.City;
+                stock.State = newStock.Results.Address == null ? null :newStock.Results.Address.State;
+                stock.PostalCode = newStock.Results.Address == null ? null :newStock.Results.Address.PostalCode;
                 stock.Description = newStock.Results.Description;
                 stock.HomePageUrl = newStock.Results.HomePageUrl;
                 stock.TotalEmployees = newStock.Results.TotalEmployees;
                 stock.ListDate = newStock.Results.ListDate;
-                stock.LogoUrl = newStock.Results.Branding.LogoUrl;
-                stock.IconUrl = newStock.Results.Branding.IconUrl;
+                stock.LogoUrl = newStock.Results.Branding == null ? null :newStock.Results.Branding.LogoUrl;
+                stock.IconUrl = newStock.Results.Branding == null ? null :newStock.Results.Branding.IconUrl;
                 stock.HasData = true;
             }
             else
@@ -155,8 +156,10 @@ public class StockService : IStockService
         
             return response;
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Console.WriteLine("EXC =>" + e);
+            
             response.StatusCode = StatusCodes.Status404NotFound;
             response.Message = "Stock not found or polygon api doesn't response";
             return response;

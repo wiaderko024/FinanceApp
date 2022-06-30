@@ -1,21 +1,43 @@
 @page "/Dashboard"
 @inject HttpClient _client
+@inject NavigationManager _navigation
 
 <h3>Dashboard</h3>
 
-<TickerSearchBar></TickerSearchBar>
+<TickerSearchBar OnSearch="OnSearch" />
+
+@if (Stock != null)
+{
+    <StockDetail Stock="Stock" />
+}
 
 @code {
-
-    public List<StockShortDTO> Stocks { get; set; }
+    
+    public StockShortDTO? Stock { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await _client.GetFromJsonAsync<SearchStocksListDTO>("api/stocks?search=tsl");
-        
-        Stocks = response.Results.ToList();
         
         await base.OnInitializedAsync();
+    }
+
+    public async Task OnSearch(string ticker)
+    {
+        await GetStockDetail(ticker);
+        StateHasChanged();
+    }
+
+    public async Task GetStockDetail(string? ticker)
+    {
+        if (ticker != null)
+        {
+            Stock = await _client.GetFromJsonAsync<StockShortDTO>($"api/stocks/{ticker}");
+        }
+        else
+        {
+            Stock = null;
+        }
+        await InvokeAsync(StateHasChanged);
     }
 
 }

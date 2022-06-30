@@ -4,7 +4,7 @@
 
 <SfAutoComplete TValue="string" TItem="StockShortDTO" Placeholder="Search stock" DataSource="@LocalData">
     <AutoCompleteFieldSettings Value="Ticker" />
-    <AutoCompleteEvents TValue="string" TItem="StockShortDTO" Filtering="OnFilter" />
+    <AutoCompleteEvents TValue="string" TItem="StockShortDTO" Filtering="OnFilter" OnValueSelect="@(args => Ticker = args.ItemData.Ticker)" />
     <AutoCompleteTemplates TItem="StockShortDTO">
         <ItemTemplate>
             <div>
@@ -14,9 +14,12 @@
         </ItemTemplate>
     </AutoCompleteTemplates>
 </SfAutoComplete>
+<button class="btn btn-primary" @onclick="@(() => OnSearch.InvokeAsync(Ticker))">Search</button>
 
 @code {
-    // public EventCallback<string> OnSearch { get; set; }
+    
+    [Parameter]
+    public EventCallback<string> OnSearch { get; set; }
 
     public string Ticker;
     List<StockShortDTO> LocalData;
@@ -52,4 +55,5 @@
             Console.WriteLine("500 -> brak odpowiedzi od polygon API");
         }
     }
+    
 }

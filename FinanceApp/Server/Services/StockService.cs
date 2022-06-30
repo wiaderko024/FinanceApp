@@ -27,7 +27,7 @@ public class StockService : IStockService
 
             foreach (var newStock in result.Results)
             {
-                var stock = await _context.Stocks.SingleOrDefaultAsync(e => string.Equals(e.Ticker, newStock.Ticker, StringComparison.CurrentCultureIgnoreCase));
+                var stock = await _context.Stocks.SingleOrDefaultAsync(e => e.Ticker.ToLower() == newStock.Ticker.ToLower());
                 if (stock == null)
                 {
                     await _context.Stocks.AddAsync(new Stock
@@ -47,13 +47,13 @@ public class StockService : IStockService
 
             return response;
         }
-        catch (SqlException e)
+        catch (SqlException)
         {
             response.StatusCode = StatusCodes.Status400BadRequest;
             response.Message = "Cannot add another stock with this same ticker";
             return response;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             response.StatusCode = StatusCodes.Status500InternalServerError;
             response.Message = "Problem with loading tickers short info from polygon api.";
@@ -65,28 +65,24 @@ public class StockService : IStockService
     {
         var response = new Response<SearchStocksListDTO>();
 
-        if (search != null)
-        {
-            var stocks = _context.Stocks.Where(e => e.Ticker.ToLower().Contains(search.ToLower()) || e.Name.ToLower().Contains(search.ToLower()))
-                .Select(e => new StockShortDTO
-                {
-                    Name = e.Name,
-                    Ticker = e.Ticker
-                });
+        if (search == null) return await AddStockInfo(search, response);
         
-            if (stocks.Any())
+        var stocks = _context.Stocks.Where(e => e.Ticker.ToLower() == search.ToLower())
+            .Select(e => new StockShortDTO
             {
-                response.StatusCode = StatusCodes.Status200OK;
-                response.Result = new SearchStocksListDTO
-                {
-                    Results = stocks
-                };
-                return response;
-            }
-            return await AddStockInfo(search, response);
-        }
+                Name = e.Name,
+                Ticker = e.Ticker
+            });
 
-        return await AddStockInfo(search, response);
+        if (!stocks.Any()) return await AddStockInfo(search, response);
+        
+        response.StatusCode = StatusCodes.Status200OK;
+        response.Result = new SearchStocksListDTO
+        {
+            Results = stocks
+        };
+        
+        return response;
     }
 
     public async Task<Response<StockDTO>> GetStockAsync(string ticker)
@@ -193,6 +189,5 @@ public class StockService : IStockService
             }
         };
     }
-
     
 }

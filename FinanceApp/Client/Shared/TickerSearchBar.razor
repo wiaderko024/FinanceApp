@@ -26,12 +26,12 @@
         try
         {
             var response = await _client.GetFromJsonAsync<SearchStocksListDTO>("api/stocks");
-
+        
             LocalData = response.Results.ToList();
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            Console.WriteLine(e);
+            Console.WriteLine("500 -> brak odpowiedzi od polygon API");
         }
 
         await base.OnInitializedAsync();
@@ -40,16 +40,16 @@
     private async Task OnFilter(FilteringEventArgs args)
     {
         Ticker = args.Text;
-
+        
         try
         {
             var response = await _client.GetFromJsonAsync<SearchStocksListDTO>($"api/stocks?search={Ticker}");
-
+        
             LocalData = response.Results.ToList();
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            Console.WriteLine(e);
+            Console.WriteLine("500 -> brak odpowiedzi od polygon API");
         }
     }
 }

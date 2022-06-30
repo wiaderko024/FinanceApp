@@ -67,11 +67,9 @@ public class StocksController : ControllerBase
     [HttpPost("{ticker}/subscribe")]
     public async Task<IActionResult> Subscribe(string ticker)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
         var response = await _subscriptionService.SubscribeAsync(ticker, new SubscribeDTO
         {
-            IdUser = userId
+            IdUser = User.FindFirstValue(ClaimTypes.NameIdentifier)
         });
         
         return response.StatusCode switch
@@ -82,10 +80,13 @@ public class StocksController : ControllerBase
         };
     }
 
-    [HttpPost("{ticker}/unsubscribe")]
-    public async Task<IActionResult> Unsubscribe(string ticker, SubscribeDTO dto)
+    [HttpDelete("{ticker}/unsubscribe")]
+    public async Task<IActionResult> Unsubscribe(string ticker)
     {
-        var response = await _subscriptionService.UnsubscribeAsync(ticker, dto);
+        var response = await _subscriptionService.UnsubscribeAsync(ticker, new SubscribeDTO
+        {
+            IdUser = User.FindFirstValue(ClaimTypes.NameIdentifier)
+        });
         return response.StatusCode switch
         {
             StatusCodes.Status404NotFound => NotFound(response.Message),

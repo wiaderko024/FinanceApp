@@ -1,0 +1,12 @@
+<h3>ChartInfo</h3>
+
+<p>From: @LastFinance.T</p>
+<p>Open: @LastFinance.O</p>
+<p>High: @LastFinance.H</p>
+<p>Low: @LastFinance.L</p>
+<p>Close: @LastFinance.C</p>
+<p>Volume: @LastFinance.V</p>
+
+@code {
+    [Parameter] public StockFinanceDTO LastFinance { get; set; }
+}

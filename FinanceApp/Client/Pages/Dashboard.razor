@@ -11,7 +11,15 @@
     <StockDetail Stock="Stock" />
 }
 
-<StockChart @ref="Chart" Finances="Finances"/>
+@if (Finances != null)
+{
+    <StockChart @ref="Chart" Finances="Finances"/>
+}
+
+@if (LastFinance != null)
+{
+    <ChartInfo LastFinance="LastFinance" />
+}
 
 @if (Articles != null)
 {
@@ -23,6 +31,7 @@
     public StockDTO? Stock { get; set; }
     public PolygonArticleDTO? Articles { get; set; }
     public List<StockFinanceDTO>? Finances { get; set; }
+    public StockFinanceDTO? LastFinance { get; set; }
     [Parameter] public StockChart Chart { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -95,12 +104,7 @@
                 }).ToList();
 
                 Finances = tmp;
-                //
-                // foreach (var halo in tmp)
-                // {
-                //     Console.WriteLine(halo.T);
-                // }
-                
+                LastFinance = Finances.SingleOrDefault(e => e.T == Finances.Max(o => o.T));
             }
             catch (Exception)
             {

@@ -148,6 +148,23 @@ public class StockService : IStockService
         }
     }
 
+    public async Task<Response<PolygonFinanceDTO>> GetFinancesAsync(string ticker)
+    {
+        var response = new Response<PolygonFinanceDTO>();
+        try
+        {
+            response.StatusCode = StatusCodes.Status200OK;
+            response.Result = await _client.GetFinancesFromTicker(ticker);
+            return response;
+        }
+        catch (Exception)
+        {
+            response.StatusCode = StatusCodes.Status500InternalServerError;
+            response.Message = "Polygon api doesn't response";
+            return response;
+        }
+    }
+
     private static StockDTO CreateStockDto(Stock stock)
     {
         return new StockDTO

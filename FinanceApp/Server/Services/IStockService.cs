@@ -9,4 +9,5 @@ public interface IStockService
     Task<Response<SearchStocksListDTO>> SearchStocksInPolygonApiAsync(string? search);
     Task<Response<StockDTO>> GetStockAsync(string ticker);
     Task<Response<PolygonArticleDTO>> GetArticlesAsync(string ticker);
+    Task<Response<PolygonFinanceDTO>> GetFinancesAsync(string ticker);
 }

@@ -24,4 +24,11 @@ public class PolygonApiClient
     {
         return await _client.GetFromJsonAsync<PolygonArticleDTO>($"https://api.polygon.io/v2/reference/news?ticker={ticker.ToUpper()}&apiKey={ApiKey}");
     }
+
+    public async Task<PolygonFinanceDTO?> GetFinancesFromTicker(string ticker)
+    {
+        var to = DateTime.Today;
+        var from = DateTime.Today.AddMonths(-3);
+        return await _client.GetFromJsonAsync<PolygonFinanceDTO>($"https://api.polygon.io/v2/aggs/ticker/{ticker.ToUpper()}/range/1/day/{from.Year}-{from.Month.ToString("00")}-{from.Day.ToString("00")}/{to.Year}-{to.Month.ToString("00")}-{to.Day.ToString("00")}?adjusted=true&sort=asc&limit=120&apiKey={ApiKey}");
+    }
 }

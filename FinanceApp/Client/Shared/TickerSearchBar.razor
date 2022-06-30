@@ -1,20 +1,20 @@
 @inject HttpClient _client
 
-<h3>TickerSearchBar</h3>
-
-<SfAutoComplete TValue="string" TItem="StockShortDTO" Placeholder="Search stock" DataSource="@LocalData">
-    <AutoCompleteFieldSettings Value="Ticker" />
-    <AutoCompleteEvents TValue="string" TItem="StockShortDTO" Filtering="OnFilter" OnValueSelect="@(args => Ticker = args.ItemData.Ticker)" />
-    <AutoCompleteTemplates TItem="StockShortDTO">
-        <ItemTemplate>
-            <div>
-                <span style="float: left">@context.Ticker</span>
-                <span style="float: right">@context.Name</span>
-            </div>
-        </ItemTemplate>
-    </AutoCompleteTemplates>
-</SfAutoComplete>
-<button class="btn btn-primary" @onclick="@(() => OnSearch.InvokeAsync(Ticker))">Search</button>
+<div style="display: flex">
+    <SfAutoComplete TValue="string" TItem="StockShortDTO" Placeholder="Search stock" DataSource="@LocalData">
+        <AutoCompleteFieldSettings Value="Ticker" />
+        <AutoCompleteEvents TValue="string" TItem="StockShortDTO" Filtering="OnFilter" OnValueSelect="@(args => Ticker = args.ItemData.Ticker)" />
+        <AutoCompleteTemplates TItem="StockShortDTO">
+            <ItemTemplate>
+                <div>
+                    <span style="float: left">@context.Ticker</span>
+                    <span style="float: right">@context.Name</span>
+                </div>
+            </ItemTemplate>
+        </AutoCompleteTemplates>
+    </SfAutoComplete>
+    <button class="btn btn-primary" @onclick="@(() => OnSearch.InvokeAsync(Ticker))">Search</button>
+</div>
 
 @code {
     

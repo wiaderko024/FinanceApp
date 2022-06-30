@@ -3,6 +3,8 @@
 @attribute [Authorize]
 @inject HttpClient _client
 
+<PageTitle>FinanceApp - Watchlist</PageTitle>
+
 <h3>Watchlist</h3>
 
 <SfGrid DataSource="@Subscriptions" TValue="SubscriptionDTO" @ref="Grid"

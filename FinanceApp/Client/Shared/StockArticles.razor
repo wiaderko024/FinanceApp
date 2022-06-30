@@ -1,12 +1,11 @@
-<h3>StockArticles</h3>
+<h2>StockArticles</h2>
 
 @foreach (var article in Articles.Results)
 {
     <p>
-        <h6>@article.Author</h6>
+        <b>@article.Author - @article.PublishedUtc</b>
         <h5>@article.Title</h5>
-        <h6>@article.ArticleUrl</h6>
-        <h7>@article.PublishedUtc</h7>
+        <a href="@article.ArticleUrl">@article.ArticleUrl</a>
     </p>
 }
 

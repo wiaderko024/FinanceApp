@@ -1,53 +1,51 @@
 @* @page "/StockDetails" *@
 
-<h3>StockDetail</h3>
-
-<img src="@Stock.Branding.LogoUrl" alt="..." />
-<h5>Name: @Stock.Name</h5>
-<h5>Ticker: @Stock.Ticker</h5>
+<img src="@Stock.Branding.LogoUrl" alt="..." height="75" />
+<p>Name: @Stock.Name</p>
+<p>Ticker: @Stock.Ticker</p>
 
 @if (Stock.CurrencyName != null)
 {
-    <h5>Currency name: @Stock.CurrencyName</h5>
+    <p>Currency name: @Stock.CurrencyName</p>
 }
 else
 {
-    <h5>Currency name: no data</h5>
+    <p>Currency name: no data</p>
 }
 
 @if (Stock.PhoneNumber != null)
 {
-    <h5>Phone number: @Stock.PhoneNumber</h5>
+    <p>Phone number: @Stock.PhoneNumber</p>
 }
 else
 {
-    <h5>Phone number: no data</h5>
+    <p>Phone number: no data</p>
 }
 
 @if (Stock.Address != null)
 {
-    <h5>Address1: @Stock.Address.Address1</h5>
-    <h5>City: @Stock.Address.City</h5>
-    <h5>State: @Stock.Address.State</h5>
-    <h5>Postal code: @Stock.Address.PostalCode</h5>
+    <p>Address1: @Stock.Address.Address1</p>
+    <p>City: @Stock.Address.City</p>
+    <p>State: @Stock.Address.State</p>
+    <p>Postal code: @Stock.Address.PostalCode</p>
 }
 else
 {
-    <h5>Address: no data</h5>
+    <p>Address: no data</p>
 }
 
 @if (Stock.Description != null)
 {
-    <h5>Description: @Stock.Description</h5>
+    <p>Description: @Stock.Description</p>
 }
 else
 {
-    <h5>Description: no data</h5>
+    <p>Description: no data</p>
 }
 
 @if (Stock.ListDate != null)
 {
-    <h5>List date: @Stock.ListDate</h5>
+    <p>List date: @Stock.ListDate</p>
 }
 else
 {
@@ -56,16 +54,16 @@ else
 
 @if (Stock.TotalEmployees != null)
 {
-    <h5>Total employees: @Stock.TotalEmployees</h5>
+    <p>Total employees: @Stock.TotalEmployees</p>
 }
 else
 {
-    <h5>Total employees: no data</h5>
+    <p>Total employees: no data</p>
 }
 
 @if (Stock.HomepageUrl != null)
 {
-    <h5>Home page: <a href="@Stock.HomepageUrl">@Stock.HomepageUrl</a></h5>
+    <p>Home page: <a href="@Stock.HomepageUrl">@Stock.HomepageUrl</a></p>
 }
 
 

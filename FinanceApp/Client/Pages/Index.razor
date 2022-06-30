@@ -4,13 +4,15 @@
 @inject HttpClient _client
 @inject NavigationManager _navigation
 
-<h3>Dashboard</h3>
+<PageTitle>FinanceApp - Dashboard</PageTitle>
+
+<h1>Dashboard</h1>
 
 <TickerSearchBar OnSearch="OnSearch" />
 
 @if (Stock != null && !Subscription)
 {
-    <button @onclick="Subscribe" class="btn btn-danger">Subscribe</button>
+    <button @onclick="Subscribe" class="btn btn-danger mt-2 mb-4" style="display: block">Subscribe</button>
 }
 
 @if (Stock != null)

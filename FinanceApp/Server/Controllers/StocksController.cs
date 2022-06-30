@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FinanceApp.Server.Helpers;
 using FinanceApp.Server.Services;
@@ -66,10 +67,14 @@ public class StocksController : ControllerBase
     [HttpPost("{ticker}/subscribe")]
     public async Task<IActionResult> Subscribe(string ticker, SubscribeDTO dto)
     {
+        // var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        // Console.WriteLine("DEBUG: " + userId);
+        
         var response = await _subscriptionService.SubscribeAsync(ticker, dto);
         return response.StatusCode switch
         {
             StatusCodes.Status404NotFound => NotFound(response.Message),
+            StatusCodes.Status400BadRequest => BadRequest(response.Message),
             _ => Ok()
         };
     }

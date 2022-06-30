@@ -35,6 +35,16 @@ public class SubscriptionService : ISubscriptionService
             return response;
         }
 
+        var subscription =
+            await _context.Subscriptions.SingleOrDefaultAsync(e => e.IdStock == stock.IdStock && e.IdUser == dto.IdUser);
+
+        if (subscription != null)
+        {
+            response.StatusCode = StatusCodes.Status400BadRequest;
+            response.Message = "Subscription exists";
+            return response;
+        }
+        
         await _context.Subscriptions.AddAsync(new Subscription
         {
             IdUser = user.Id,

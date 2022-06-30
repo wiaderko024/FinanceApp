@@ -128,4 +128,38 @@ public class SubscriptionService : ISubscriptionService
 
         return response;
     }
+
+    public async Task<Response<SubscriptionsDTO>> GetSubscriptionsListAsync(string userId)
+    {
+        var response = new Response<SubscriptionsDTO>();
+
+        // debug
+        Console.WriteLine("DENUG " + userId);
+        
+        var user = await _context.Users.SingleOrDefaultAsync(e => e.Id == userId);
+        if (user == null)
+        {
+            response.StatusCode = StatusCodes.Status404NotFound;
+            response.Message = "User not found";
+            return response;
+        }
+
+        var results = _context.Stocks.Join(_context.Subscriptions, stock => stock.IdStock, sub => sub.IdStock,
+            (stock, subscription) => new SubscriptionDTO
+            {
+                Name = stock.Name,
+                Ticker = stock.Ticker,
+                LogoUrl = stock.LogoUrl,
+                City = stock.City,
+                Currency = stock.CurrencyName
+            });
+        
+        response.StatusCode = StatusCodes.Status200OK;
+        response.Result = new SubscriptionsDTO
+        {
+            Subscriptions = results
+        };
+
+        return response;
+    }
 }

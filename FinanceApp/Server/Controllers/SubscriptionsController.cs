@@ -31,4 +31,18 @@ public class SubscriptionsController : ControllerBase
             _ => Ok(response.Result)
         };
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetSubscriptionsList()
+    {
+        var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        Console.WriteLine("DBG =>" + user);
+        
+        var response = await _service.GetSubscriptionsListAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        return response.StatusCode switch
+        {
+            StatusCodes.Status404NotFound => NotFound(response.Message),
+            _ => Ok(response.Result)
+        };
+    }
 }

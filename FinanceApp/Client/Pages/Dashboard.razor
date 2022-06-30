@@ -11,19 +11,25 @@
     <StockDetail Stock="Stock" />
 }
 
+@if (Articles != null)
+{
+    <StockArticles Articles="Articles" />
+}
+
 @code {
     
     public StockDTO? Stock { get; set; }
+    public PolygonArticleDTO? Articles { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        
         await base.OnInitializedAsync();
     }
 
     public async Task OnSearch(string ticker)
     {
         await GetStockDetail(ticker);
+        await GetArticles(ticker);
         StateHasChanged();
     }
 
@@ -37,12 +43,32 @@
             }
             catch (Exception)
             {
-                
+                Console.WriteLine("Not found or polygon api doesn't response");
             }
         }
         else
         {
             Stock = null;
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async Task GetArticles(string? ticker)
+    {
+        if (ticker != null)
+        {
+            try
+            {
+                Articles = await _client.GetFromJsonAsync<PolygonArticleDTO>($"api/stocks/{ticker}/getarticles");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Polygon api doesn't response");
+            }
+        }
+        else
+        {
+            Articles = null;
         }
         await InvokeAsync(StateHasChanged);
     }

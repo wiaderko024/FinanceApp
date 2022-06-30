@@ -1,0 +1,18 @@
+<h3>StockArticles</h3>
+
+@foreach (var article in Articles.Results)
+{
+    <p>
+        <h6>@article.Author</h6>
+        <h5>@article.Title</h5>
+        <h6>@article.ArticleUrl</h6>
+        <h7>@article.PublishedUtc</h7>
+    </p>
+}
+
+@code {
+    
+    [Parameter]
+    public PolygonArticleDTO Articles { get; set; }
+    
+}

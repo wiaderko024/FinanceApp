@@ -6,7 +6,7 @@
 
 <TickerSearchBar OnSearch="OnSearch" />
 
-@if (Stock != null)
+@if (Stock != null && !Subscription)
 {
     <button @onclick="Subscribe" class="btn btn-danger">Subscribe</button>
 }
@@ -37,6 +37,7 @@
     public PolygonArticleDTO? Articles { get; set; }
     public List<StockFinanceDTO>? Finances { get; set; }
     public StockFinanceDTO? LastFinance { get; set; }
+    public bool Subscription = false;
     [Parameter] public StockChart? Chart { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -49,6 +50,7 @@
         await GetStockDetail(ticker);
         await GetArticles(ticker);
         await GetFinances(ticker);
+        await HasSubscription(ticker);
 
         Chart?.Chart.Refresh();
 
@@ -128,10 +130,23 @@
         try
         {
             await _client.PostAsync($"api/stocks/{Stock.Ticker}/subscribe", null);
+            Subscription = true;
         }
         catch (Exception e)
         {
             Console.WriteLine("Problem with subscription");
+        }
+    }
+
+    public async Task HasSubscription(string ticker)
+    {
+        try
+        {
+            Subscription = await _client.GetFromJsonAsync<bool>($"api/subscriptions/{ticker}/hassubscription");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Problem with HasSubscription API call");
         }
     }
 

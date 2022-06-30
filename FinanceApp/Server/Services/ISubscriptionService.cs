@@ -7,5 +7,5 @@ public interface ISubscriptionService
 {
     Task<Response<object>> SubscribeAsync(string ticker, SubscribeDTO dto);
     Task<Response<object>> UnsubscribeAsync(string ticker, SubscribeDTO dto);
-    Task<Response<bool>> HasSubscriptionAsync(HasSubscriptionReqDTO dto);
+    Task<Response<bool>> HasSubscriptionAsync(string ticker, string userId);
 }

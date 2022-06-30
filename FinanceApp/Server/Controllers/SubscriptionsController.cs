@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FinanceApp.Server.Services;
 using FinanceApp.Shared.DTO;
@@ -20,10 +21,10 @@ public class SubscriptionsController : ControllerBase
         _service = service;
     }
 
-    [HttpGet("HasSubscription")]
-    public async Task<IActionResult> HasSubscription(HasSubscriptionReqDTO dto)
+    [HttpGet("{ticker}/HasSubscription")]
+    public async Task<IActionResult> HasSubscription(string ticker)
     {
-        var response = await _service.HasSubscriptionAsync(dto);
+        var response = await _service.HasSubscriptionAsync(ticker, User.FindFirstValue(ClaimTypes.NameIdentifier));
         return response.StatusCode switch
         {
             StatusCodes.Status404NotFound => NotFound(response.Message),

@@ -99,11 +99,11 @@ public class SubscriptionService : ISubscriptionService
         return response;
     }
 
-    public async Task<Response<bool>> HasSubscriptionAsync(HasSubscriptionReqDTO dto)
+    public async Task<Response<bool>> HasSubscriptionAsync(string ticker, string userId)
     {
         var response = new Response<bool>();
 
-        var user = await _context.Users.SingleOrDefaultAsync(e => e.Id == dto.IdUser);
+        var user = await _context.Users.SingleOrDefaultAsync(e => e.Id == userId);
         if (user == null)
         {
             response.StatusCode = StatusCodes.Status404NotFound;
@@ -111,7 +111,7 @@ public class SubscriptionService : ISubscriptionService
             return response;
         }
 
-        var stock = await _context.Stocks.SingleOrDefaultAsync(e => e.Ticker.ToLower() == dto.Ticker.ToLower());
+        var stock = await _context.Stocks.SingleOrDefaultAsync(e => e.Ticker.ToLower() == ticker.ToLower());
         if (stock == null)
         {
             response.StatusCode = StatusCodes.Status404NotFound;
@@ -121,7 +121,7 @@ public class SubscriptionService : ISubscriptionService
 
         var subscription =
             await _context.Subscriptions.SingleOrDefaultAsync(e =>
-                e.IdUser == dto.IdUser && e.IdStock == stock.IdStock);
+                e.IdUser == userId && e.IdStock == stock.IdStock);
 
         response.StatusCode = StatusCodes.Status200OK;
         response.Result = subscription != null;
